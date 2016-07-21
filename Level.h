@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "GameObject.h"
+#include <iostream>
 
 class Level : public GameObject {
 public:
@@ -33,6 +34,7 @@ public:
     int logic();
     bool colAt(float,float);
     void activateAt(float,float);
+    void serialize(std::ostream&);
 
     sf::Sprite getFG();
     sf::Sprite getBG();

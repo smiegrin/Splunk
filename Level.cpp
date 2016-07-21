@@ -222,6 +222,36 @@ void Level::activateAt(float x, float y) {
     updateBgAt(u,v);
 }
 
+void Level::serialize(std::ostream& stream) {
+    stream << width << "\n" << height << "\n"; //add noteID later.
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            switch (space[x+y*width]) {
+            case Air:
+                stream << " ";
+                break;
+            case Ground:
+                stream << "#";
+                break;
+            case Smear:
+                stream << "*";
+                break;
+            case Note:
+                stream << "!";
+                break;
+            case UpPassage:
+                stream << "U";
+                break;
+            case DownPassage:
+                stream << "D";
+                break;
+            }
+        }
+        stream << "\n";
+    }
+}
+
+
 sf::Sprite Level::getFG() { return sf::Sprite(fg.getTexture()); }
 
 sf::Sprite Level::getBG() { return sf::Sprite(bg.getTexture()); }
