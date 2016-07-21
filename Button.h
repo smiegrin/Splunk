@@ -16,6 +16,8 @@ public:
 
 	bool pointOnBox(int,int);
 
+	void setPosition(float,float);
+
 	//inherited from Drawable
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

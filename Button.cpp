@@ -37,6 +37,15 @@ bool Button::pointOnBox(int u, int v) { // checks to see if the absolute coordin
 	return true;
 }
 
+void Button::setPosition(float u, float v) {
+    x = u;
+    y = v;
+    shape.setPosition(u,v);
+	label.setPosition(x+width/2-label.getGlobalBounds().width/2,
+                      y+height/2-label.getGlobalBounds().height);
+
+}
+
 //extending Drawable
 
 void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {

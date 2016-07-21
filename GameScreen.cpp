@@ -1,4 +1,5 @@
 #include "GameScreen.h"
+#include "PauseScreen.h"
 #include <iostream>
 
 GameScreen::GameScreen() {
@@ -15,7 +16,15 @@ int GameScreen::open(sf::RenderWindow* window) {
         while(window->pollEvent(event)) {
             if(event.type == sf::Event::Closed) window->close();
             if(event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Escape) window->close();
+                if (event.key.code == sf::Keyboard::Escape) {
+                    PauseScreen().open(window);
+                    sf::Vector2f sizeV = (sf::Vector2f)window->getSize();
+                    if (sizeV.x > sizeV.y) sizeV *= 500.f/sizeV.y;
+                    else sizeV *= 500.f/sizeV.x;
+                    camera = sf::View(player.getPosition(), sizeV);
+                    window->setView(camera);
+                }
+                if (event.key.code == sf::Keyboard::Return) levels[currentLevel].serialize(std::cout);
             }
             if(event.type == sf::Event::Resized) {
                 sf::Vector2f sizeV = (sf::Vector2f)window->getSize();
