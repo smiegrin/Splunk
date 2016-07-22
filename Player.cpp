@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "ResourceManager.h"
 
 Player::Player() {} //unused constructor
 
@@ -11,6 +12,13 @@ Player::Player(Level* newWorld) {
     yPos = 0.;
     xVel = 0.;
     yVel = 0.;
+    anim = 0;
+    direction = 1;
+
+    sprite = sf::Sprite(ResourceManager::SplunkSprites);
+    sprite.setOrigin(16.,16.);
+    sprite.setTextureRect(sf::IntRect(0,0,32,32));
+
     while (world->colAt(xPos,yPos)) {
         xPos = (float)(rand() % (int)world->getPixelSize().x);
         yPos = (float)(rand() % (int)world->getPixelSize().y);
@@ -55,17 +63,35 @@ int Player::logic() {
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !jumpActivated)  {
             yVel = -8;
             jumpActivated = true;
+            anim = 0;
+            sprite.setTextureRect(sf::IntRect(32,0,32,32));
         }
 
         //left or right
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) xVel = -3.5;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) xVel = 3.5;
-        else xVel = 0;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            xVel = -3.5;
+            direction = -1;
+            anim = ++anim % 40;
+            sprite.setTextureRect(sf::IntRect(anim/10*32,0,32,32));
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            xVel = 3.5;
+            direction = 1;
+            anim = ++anim % 40;
+            sprite.setTextureRect(sf::IntRect(anim/10*32,0,32,32));
+        }
+        else {
+            xVel = 0;
+            anim = 0;
+            sprite.setTextureRect(sf::IntRect(0,0,32,32));
+        }
     }
     else {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && xVel >= 0) xVel = -1.;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && xVel <= 0) xVel = 1.;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && xVel >= 0) xVel = -1., direction = -1;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && xVel <= 0) xVel = 1., direction = 1;
         yVel += .35;
+        anim = 0;
+        sprite.setTextureRect(sf::IntRect(32,0,32,32));
     }
 
     //dig check
@@ -93,16 +119,17 @@ int Player::logic() {
     }
 
     for (int i = abs(xVel); i > 0; i--) {
-        if(!world->colAt(xPos + abs(xVel)/xVel*16, yPos)) xPos += abs(xVel)/xVel;
+        if(!world->colAt(xPos + abs(xVel)/xVel*5, yPos)) xPos += abs(xVel)/xVel;
         else break;
     }
+
+    //prepare to draw
+    sprite.setScale(direction,1);
+    sprite.setPosition(xPos,yPos);
 
     return 0;
 }
 
 void Player::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    sf::RectangleShape temp(sf::Vector2f(32.,32.));
-    temp.setFillColor(sf::Color(128,128,128));
-    temp.setPosition(xPos-16,yPos-16);
-    target.draw(temp);
+    target.draw(sprite);
 }

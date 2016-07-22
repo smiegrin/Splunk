@@ -12,9 +12,11 @@ private:
     float xVel;
     float yVel;
     int direction;
+    int anim;
     bool jumpActivated;
     bool digActivated;
     Level* world;
+    sf::Sprite sprite;
 
 public:
     Player();

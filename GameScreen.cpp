@@ -11,6 +11,12 @@ GameScreen::GameScreen() {
 }
 
 int GameScreen::open(sf::RenderWindow* window) {
+    sf::Vector2f sizeV = (sf::Vector2f)window->getSize();
+    if (sizeV.x > sizeV.y) sizeV *= 500.f/sizeV.y;
+    else sizeV *= 500.f/sizeV.x;
+    camera = sf::View(player.getPosition(), sizeV);
+    window->setView(camera);
+
     while (window->isOpen()) {
         sf::Event event;
         while(window->pollEvent(event)) {

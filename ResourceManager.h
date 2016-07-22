@@ -10,6 +10,7 @@ public:
 
     static sf::Texture GroundTiling;
     static sf::Texture WallTiling;
+    static sf::Texture SplunkSprites;
 
     static void initialize();
 };
