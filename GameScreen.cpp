@@ -1,12 +1,19 @@
 #include "GameScreen.h"
 #include "PauseScreen.h"
-#include <iostream>
+#include <fstream>
 
 GameScreen::GameScreen() {
-    levels = new Level[20];
-    //for (int i = 0; i < 20; i++) levels[i] = Level();
+    levels = new Level*[20];
+
+    std::ifstream stream;
+    stream.open("Level.lvl");
+    levels[0] = new Level(stream);
+    levels[0]->serialize(std::cout);
+    stream.close();
+
+    for (int i = 1; i < 20; i++) levels[i] = new Level();
     currentLevel = 0;
-    player = Player(&levels[currentLevel]);
+    player = Player(levels[currentLevel]);
     camera = sf::View(sf::FloatRect(0.,0.,500.,500.));
 }
 
@@ -30,7 +37,12 @@ int GameScreen::open(sf::RenderWindow* window) {
                     camera = sf::View(player.getPosition(), sizeV);
                     window->setView(camera);
                 }
-                if (event.key.code == sf::Keyboard::Return) levels[currentLevel].serialize(std::cout);
+                if (event.key.code == sf::Keyboard::Return) {
+                    std::ofstream stream;
+                    stream.open("Level.lvl");
+                    levels[currentLevel]->serialize(stream);
+                    stream.close();
+                }
             }
             if(event.type == sf::Event::Resized) {
                 sf::Vector2f sizeV = (sf::Vector2f)window->getSize();
@@ -41,16 +53,16 @@ int GameScreen::open(sf::RenderWindow* window) {
         }
 
         player.logic();
-        switch (levels[currentLevel].logic()) {
+        switch (levels[currentLevel]->logic()) {
         case Level::ADVANCE_LEVEL:
             if (currentLevel < 19) currentLevel++;
-            player.setWorld(&levels[currentLevel]);
-            player.setPosition(levels[currentLevel].getUpLoc());
+            player.setWorld(levels[currentLevel]);
+            player.setPosition(levels[currentLevel]->getUpLoc());
             break;
         case Level::RETURN_LEVEL:
             if (currentLevel > 0) currentLevel--;
-            player.setWorld(&levels[currentLevel]);
-            player.setPosition(levels[currentLevel].getDownLoc());
+            player.setWorld(levels[currentLevel]);
+            player.setPosition(levels[currentLevel]->getDownLoc());
             break;
         case Level::OPEN_NOTE:
             std::cout << "HO1!!!\n";
@@ -60,9 +72,9 @@ int GameScreen::open(sf::RenderWindow* window) {
 
         window->setView(camera);
         window->clear(sf::Color::Black);
-        window->draw(levels[currentLevel].getBG());
+        window->draw(levels[currentLevel]->getBG());
         window->draw(player);
-        window->draw(levels[currentLevel].getFG());
+        window->draw(levels[currentLevel]->getFG());
         window->display();
     }
     return 0;

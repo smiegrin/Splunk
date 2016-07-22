@@ -99,32 +99,94 @@ Level::Level() {
         bg.draw(wallSegment);
     }
     bg.display();
+}
 
+Level::Level(std::istream& stream) {
+    gridSize = 32.;
+    noteAccessed = 0;
+    portalAccessed = 0;
 
-    /*/add details
-    sf::RectangleShape temp = sf::RectangleShape(sf::Vector2f(32.,32.));
-    for (int x = 0; x < 50; x++) for (int y = 0; y < 50; y++) {
-        switch (space[x+width*y]) {
-        case Ground:
-            temp.setFillColor(sf::Color::Transparent);
+    std::cout << "Begin Load\n";
+    stream >> width;
+    stream >> height;
+    space = new Block[width*height];
+    std::cout << "Loading Blocks\n";
+    char piece;
+    for (int v = 0; v < height; v++) for (int u = 0; u < width; u++) {
+        stream >> piece;
+        std::cout << piece;
+        if (piece == '\n') stream >> piece;
+        switch (piece) {
+        case '`':
+            space[u+v*width] = Air;
             break;
-        case Air:
-            temp.setFillColor(sf::Color::Transparent);
+        case '#':
+            space[u+v*width] = Ground;
             break;
-        case DownPassage:
-            temp.setFillColor(sf::Color::Green);
+        case '!':
+            space[u+v*width] = Note;
             break;
-        case UpPassage:
-            temp.setFillColor(sf::Color::Red);
+        case '*':
+            space[u+v*width] = Smear;
             break;
-        case Note:
-            temp.setFillColor(sf::Color::Blue);
+        case 'U':
+            space[u+v*width] = UpPassage;
+            upLoc = sf::Vector2f(u*32.+16,v*32+16);
+            break;
+        case 'D':
+            space[u+v*width] = DownPassage;
+            downLoc = sf::Vector2f(u*32.+16,v*32+16);
             break;
         }
-        temp.setPosition(sf::Vector2f(x*gridSize,y*gridSize));
-        fg.draw(temp);
     }
-    fg.display();//*/
+
+    std::cout << "Generating graphics\n";
+    //draw up stage
+    fg.create(1600,1600);
+    fg.clear(sf::Color::Transparent);
+    sf::Sprite wallSegment = sf::Sprite(ResourceManager::GroundTiling, sf::IntRect(0,0,32,32));
+    int u = 0;
+    int v = 0;
+    for (int x = 0; x < 49; x++) for (int y = 0; y < 49; y++) {
+        u = 0;
+        v = 0;
+        if (space[x+y*50] == Ground) u += 32;
+        if (space[x+1+y*50] == Ground) u += 64;
+        if (space[x+(y+1)*50] == Ground) v += 32;
+        if (space[x+1+(y+1)*50] == Ground) v += 64;
+        wallSegment.setTextureRect(sf::IntRect(u,v,32,32));
+        wallSegment.setPosition(16+32*x,16+32*y);
+        fg.draw(wallSegment);
+    }
+    fg.display();
+
+    bg.create(1600,1600);
+    bg.clear();
+    wallSegment.setTexture(ResourceManager::WallTiling);
+    for (int x = 1; x < 49; x++) for (int y = 1; y < 49; y++) {
+        switch(space[x+width*y]) {
+        case Ground:
+        case Air:
+            wallSegment.setTextureRect((rand()%2)? sf::IntRect(0,0,32,32) : sf::IntRect(32,32,32,32));
+            break;
+        case Smear:
+            wallSegment.setTextureRect(sf::IntRect(0,32,32,32));
+            break;
+        case Note:
+            wallSegment.setTextureRect(sf::IntRect(96,0,32,32));
+            break;
+        case DownPassage:
+            wallSegment.setTextureRect(sf::IntRect(32,0,32,32));
+            break;
+        case UpPassage:
+            wallSegment.setTextureRect(sf::IntRect(64,0,32,32));
+            break;
+        }
+        wallSegment.setPosition(x*32.,y*32);
+        bg.draw(wallSegment);
+    }
+    bg.display();
+    std::cout << "Done\n";
 }
 
 void Level::updateFgAt(int x, int y) {
@@ -228,7 +290,7 @@ void Level::serialize(std::ostream& stream) {
         for (int x = 0; x < width; x++) {
             switch (space[x+y*width]) {
             case Air:
-                stream << " ";
+                stream << "`";
                 break;
             case Ground:
                 stream << "#";

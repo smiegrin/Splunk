@@ -10,7 +10,7 @@ class GameScreen : public Screen {
 private:
     sf::View camera;
     int currentLevel;
-    Level* levels;
+    Level** levels;
     Player player;
 public:
     GameScreen();

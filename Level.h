@@ -30,6 +30,8 @@ private:
 
 public:
     Level();
+    Level(std::istream&);
+
     sf::Vector2f getPixelSize();
     int logic();
     bool colAt(float,float);
