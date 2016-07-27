@@ -14,6 +14,8 @@ Player::Player(Level* newWorld) {
     yVel = 0.;
     anim = 0;
     direction = 1;
+    levelFlags = new int[20];
+    for (int i = 0; i < 20; i++) levelFlags[i] = 0;
 
     sprite = sf::Sprite(ResourceManager::SplunkSprites);
     sprite.setOrigin(16.,16.);
@@ -28,6 +30,8 @@ Player::Player(Level* newWorld) {
 
 sf::Vector2f Player::getPosition() { return sf::Vector2f(xPos,yPos); }
 
+int Player::getFlag(int levelNum) { return levelFlags[levelNum]; }
+
 
 void Player::setPosition(float newX, float newY) {
     xPos = newX;
@@ -41,6 +45,10 @@ void Player::setPosition(sf::Vector2f posV) {
 
 void Player::setWorld(Level* newWorld) {
     world = newWorld;
+}
+
+void Player::setFlag(int levelNum, int flag) {
+    levelFlags[levelNum] = levelFlags[levelNum] | flag;
 }
 
 

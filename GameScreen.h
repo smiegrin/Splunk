@@ -8,12 +8,14 @@
 
 class GameScreen : public Screen {
 private:
+    sf::View resize(int,int);
+
     sf::View camera;
     int currentLevel;
     Level** levels;
     Player player;
 public:
-    GameScreen();
+    GameScreen(bool);
     int open(sf::RenderWindow*);
 };
 

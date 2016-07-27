@@ -106,15 +106,13 @@ Level::Level(std::istream& stream) {
     noteAccessed = 0;
     portalAccessed = 0;
 
-    std::cout << "Begin Load\n";
     stream >> width;
     stream >> height;
     space = new Block[width*height];
-    std::cout << "Loading Blocks\n";
+
     char piece;
     for (int v = 0; v < height; v++) for (int u = 0; u < width; u++) {
         stream >> piece;
-        std::cout << piece;
         if (piece == '\n') stream >> piece;
         switch (piece) {
         case '`':
@@ -140,7 +138,6 @@ Level::Level(std::istream& stream) {
         }
     }
 
-    std::cout << "Generating graphics\n";
     //draw up stage
     fg.create(1600,1600);
     fg.clear(sf::Color::Transparent);
@@ -186,7 +183,6 @@ Level::Level(std::istream& stream) {
         bg.draw(wallSegment);
     }
     bg.display();
-    std::cout << "Done\n";
 }
 
 void Level::updateFgAt(int x, int y) {

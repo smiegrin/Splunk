@@ -8,6 +8,7 @@
 class MainMenu : public Screen{
 private:
     Button playButton;
+    Button loadButton;
     sf::Text title;
 public:
     MainMenu();

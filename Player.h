@@ -6,6 +6,10 @@
 #include "Level.h"
 
 class Player : public GameObject {
+public:
+    static const int VISITED = 1;
+    static const int NOTE_READ = 2;
+
 private:
     float xPos;
     float yPos;
@@ -13,6 +17,7 @@ private:
     float yVel;
     int direction;
     int anim;
+    int* levelFlags;
     bool jumpActivated;
     bool digActivated;
     Level* world;
@@ -23,10 +28,12 @@ public:
     Player(Level*);
 
     sf::Vector2f getPosition();
+    int getFlag(int);
 
     void setPosition(float,float);
     void setPosition(sf::Vector2f);
     void setWorld(Level*);
+    void setFlag(int,int);
 
     int logic();
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
