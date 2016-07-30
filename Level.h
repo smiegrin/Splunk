@@ -27,9 +27,10 @@ private:
     float gridSize;
     int width;
     int height;
+    int noteID;
 
 public:
-    Level();
+    Level(int);
     Level(std::istream&);
 
     sf::Vector2f getPixelSize();
@@ -38,6 +39,7 @@ public:
     void activateAt(float,float);
     void serialize(std::ostream&);
 
+    int getNoteID();
     sf::Sprite getFG();
     sf::Sprite getBG();
     sf::Vector2f getDownLoc();

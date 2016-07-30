@@ -1,5 +1,6 @@
 #include "GameScreen.h"
 #include "PauseScreen.h"
+#include "NoteScreen.h"
 #include <fstream>
 #include <sstream>
 
@@ -34,9 +35,10 @@ GameScreen::GameScreen(bool load) {
         }
     }
     else {
-        for (int i = 0; i < 20; i++) levels[i] = new Level();
+        for (int i = 0; i < 20; i++) levels[i] = new Level(i+1);
         currentLevel = 0;
         player = Player(levels[currentLevel]);
+        player.setFlag(0,Player::VISITED);
         camera = sf::View(sf::FloatRect(0.,0.,500.,500.));
     }
 }
@@ -94,8 +96,10 @@ int GameScreen::open(sf::RenderWindow* window) {
             player.setFlag(currentLevel, Player::VISITED);
             break;
         case Level::OPEN_NOTE:
-            std::cout << "HO1!!!\n";
             player.setFlag(currentLevel, Player::NOTE_READ);
+            NoteScreen(levels[currentLevel]->getNoteID()).open(window);
+            camera = resize(window->getSize().x,window->getSize().y);
+            window->setView(camera);
             break;
         }
         camera.setCenter((player.getPosition() - camera.getCenter())/10.f+camera.getCenter());

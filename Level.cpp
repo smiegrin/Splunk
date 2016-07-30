@@ -1,11 +1,12 @@
 #include "Level.h"
 #include "ResourceManager.h"
 
-Level::Level() {
+Level::Level(int ID) {
     space = new Block[50*50];
     gridSize = 32.;
     width = 50;
     height = 50;
+    noteID = ID;
     portalAccessed = 0;
     noteAccessed = 0;
 
@@ -51,7 +52,6 @@ Level::Level() {
         y = rand()%height;
     }
     space[x+width*y] = Note;
-    //establish note ID here
 
 
     //draw up stage
@@ -108,6 +108,7 @@ Level::Level(std::istream& stream) {
 
     stream >> width;
     stream >> height;
+    stream >> noteID;
     space = new Block[width*height];
 
     char piece;
@@ -281,7 +282,7 @@ void Level::activateAt(float x, float y) {
 }
 
 void Level::serialize(std::ostream& stream) {
-    stream << width << "\n" << height << "\n"; //add noteID later.
+    stream << width << "\n" << height << "\n" << noteID << "\n";
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             switch (space[x+y*width]) {
@@ -309,6 +310,8 @@ void Level::serialize(std::ostream& stream) {
     }
 }
 
+
+int Level::getNoteID() { return noteID; }
 
 sf::Sprite Level::getFG() { return sf::Sprite(fg.getTexture()); }
 
