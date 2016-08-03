@@ -31,25 +31,25 @@ Level::Level(int ID) {
         }
         space = genSpace;
     }
-    int x = rand()%width;
-    int y = rand()%height;
-    while (space[x+width*y] != Air) {
-        x = rand()%width;
-        y = rand()%height;
+    int x = 2+rand()%(width-4);
+    int y = 2+rand()%(height-4);
+    while (space[x+width*y] != Air || space[x+width*(y+1)] != Ground) {
+        x = 2+rand()%(width-4);
+        y = 2+rand()%(height-4);
     }
     space[x+width*y] = DownPassage;
     downLoc = sf::Vector2f(x*32+16., y*32+16.);
 
-    while (space[x+width*y] != Air) {
-        x = rand()%width;
-        y = rand()%height;
+    while (space[x+width*y] != Air || space[x+width*(y+1)] != Ground) {
+        x = 2+rand()%(width-4);
+        y = 2+rand()%(height-4);
     }
     space[x+width*y] = UpPassage;
     upLoc = sf::Vector2f(x*32+16., y*32+16.);
 
-    while (space[x+width*y] != Air) {
-        x = rand()%width;
-        y = rand()%height;
+    while (space[x+width*y] != Air || space[x+width*(y+1)] != Ground) {
+        x = 2+rand()%(width-4);
+        y = 2+rand()%(height-4);
     }
     space[x+width*y] = Note;
 
